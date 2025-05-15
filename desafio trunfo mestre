@@ -1,0 +1,176 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    // Dados da Carta 1
+    int populacao1, pontos_turisticos1;
+    float area1, pib1;
+    char estado1[30], codigo1[20], cidade1[35];
+
+    // Dados da Carta 2
+    int populacao2, pontos_turisticos2;
+    float area2, pib2;
+    char estado2[30], codigo2[20], cidade2[35];
+
+    // -------- CARTA 1 --------
+    printf("Carta 1:\n");
+
+    printf("Insira a letra do estado: \n");
+    scanf("%s", estado1);
+
+    printf("Insira o código da carta: \n");
+    scanf("%s", codigo1);
+
+    getchar();
+    printf("Insira o nome da cidade: \n");
+    fgets(cidade1, sizeof(cidade1), stdin);
+    cidade1[strcspn(cidade1, "\n")] = 0;
+
+    printf("Insira a população: \n");
+    scanf("%d", &populacao1);
+
+    printf("Insira a Área: \n");
+    scanf("%f", &area1);
+
+    printf("Insira o PIB: \n");
+    scanf("%f", &pib1);
+
+    printf("Insira o número de pontos turísticos: \n");
+    scanf("%d", &pontos_turisticos1);
+
+    // -------- CARTA 2 --------
+    printf("\nCarta 2:\n");
+
+    printf("Insira a letra do estado: \n");
+    scanf("%s", estado2);
+
+    printf("Insira o código da carta: \n");
+    scanf("%s", codigo2);
+
+    getchar();
+    printf("Insira o nome da cidade: \n");
+    fgets(cidade2, sizeof(cidade2), stdin);
+    cidade2[strcspn(cidade2, "\n")] = 0;
+
+    printf("Insira a população: \n");
+    scanf("%d", &populacao2);
+
+    printf("Insira a Área: \n");
+    scanf("%f", &area2);
+
+    printf("Insira o PIB: \n");
+    scanf("%f", &pib2);
+
+    printf("Insira o número de pontos turísticos: \n");
+    scanf("%d", &pontos_turisticos2);
+
+    float densidade1 = populacao1 / area1;
+    float densidade2 = populacao2 / area2;
+
+    int opcao1, opcao2;
+    int atributos_usados[2] = {0}; // Guarda os atributos escolhidos
+
+    // Menu dinâmico: escolha do primeiro atributo
+    printf("\nEscolha o primeiro atributo para comparar:\n");
+    printf("1 - População\n");
+    printf("2 - Área\n");
+    printf("3 - PIB\n");
+    printf("4 - Pontos turísticos\n");
+    printf("5 - Densidade demográfica\n");
+    printf("Digite a opção: ");
+    scanf("%d", &opcao1);
+
+    if (opcao1 < 1 || opcao1 > 5) {
+        printf("Opção inválida! Encerrando o programa.\n");
+        return 1;
+    }
+    atributos_usados[0] = opcao1;
+
+    // Menu dinâmico: escolha do segundo atributo
+    printf("\nEscolha o segundo atributo para comparar (diferente do primeiro):\n");
+    for (int i = 1; i <= 5; i++) {
+        if (i != opcao1) {
+            switch (i) {
+                case 1: printf("1 - População\n"); break;
+                case 2: printf("2 - Área\n"); break;
+                case 3: printf("3 - PIB\n"); break;
+                case 4: printf("4 - Pontos turísticos\n"); break;
+                case 5: printf("5 - Densidade demográfica\n"); break;
+            }
+        }
+    }
+
+    printf("Digite a opção: ");
+    scanf("%d", &opcao2);
+
+    if (opcao2 < 1 || opcao2 > 5 || opcao2 == opcao1) {
+        printf("Opção inválida ou repetida! Encerrando o programa.\n");
+        return 1;
+    }
+    atributos_usados[1] = opcao2;
+
+    float soma1 = 0, soma2 = 0;
+
+    printf("\nComparando %s e %s:\n", cidade1, cidade2);
+
+    for (int i = 0; i < 2; i++) {
+        int atributo = atributos_usados[i];
+
+        switch (atributo) {
+            case 1:
+                printf("\nAtributo: População\n");
+                printf("%s: %d\n", cidade1, populacao1);
+                printf("%s: %d\n", cidade2, populacao2);
+                soma1 += populacao1;
+                soma2 += populacao2;
+                break;
+
+            case 2:
+                printf("\nAtributo: Área\n");
+                printf("%s: %.2f\n", cidade1, area1);
+                printf("%s: %.2f\n", cidade2, area2);
+                soma1 += area1;
+                soma2 += area2;
+                break;
+
+            case 3:
+                printf("\nAtributo: PIB\n");
+                printf("%s: %.2f\n", cidade1, pib1);
+                printf("%s: %.2f\n", cidade2, pib2);
+                soma1 += pib1;
+                soma2 += pib2;
+                break;
+
+            case 4:
+                printf("\nAtributo: Pontos turísticos\n");
+                printf("%s: %d\n", cidade1, pontos_turisticos1);
+                printf("%s: %d\n", cidade2, pontos_turisticos2);
+                soma1 += pontos_turisticos1;
+                soma2 += pontos_turisticos2;
+                break;
+
+            case 5:
+                printf("\nAtributo: Densidade demográfica (menor vence)\n");
+                printf("%s: %.2f\n", cidade1, densidade1);
+                printf("%s: %.2f\n", cidade2, densidade2);
+                // Para soma, invertemos o valor para manter a lógica de maior vence
+                soma1 += 1000000 / densidade1; // peso artificial inverso
+                soma2 += 1000000 / densidade2;
+                break;
+        }
+    }
+
+    printf("\nSoma ponderada dos atributos:\n");
+    printf("%s: %.2f\n", cidade1, soma1);
+    printf("%s: %.2f\n", cidade2, soma2);
+
+    if (soma1 > soma2) {
+        printf("\nResultado final: %s venceu a rodada!\n", cidade1);
+    } else if (soma2 > soma1) {
+        printf("\nResultado final: %s venceu a rodada!\n", cidade2);
+    } else {
+        printf("\nResultado final: Empate!\n");
+    }
+
+    return 0;
+}
